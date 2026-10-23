@@ -1,52 +1,92 @@
-# Portfolio
+# Portfolio Sebastian Szyszło
 
-Node.js >=22.12.
+Statyczne portfolio React + Vite dla GitHub Pages z routingiem hash (`#/...`).
+
+## Wymagania
+
+- Node.js >= 22.12
+- npm
+
+## Uruchomienie lokalne
 
 ```sh
-npm install
+npm ci --include=optional
 npm run dev
-npm run build
 ```
+
+Build produkcyjny:
+
+```sh
+npm run build
+npm run preview
+```
+
+## Routing
+
+Aplikacja działa bez przepisywania URL po stronie serwera dzięki hash routingowi:
+
+- `#/` — strona główna
+- `#/projekty` — indeks projektów
+- `#/projekty/:id` — podstrona projektu
+- `#/warsztat` — warsztat / o projekcie
+- `#/kontakt` — kontakt
+
+## Edycja treści i obrazów
+
+Główne treści edytujesz w:
+
+- `/home/runner/work/Szyseb.github.io/Szyseb.github.io/src/content.js`
+
+Pola obrazów do uzupełnienia:
+
+- `projects[].image` — okładka projektu
+- `projects[].images[]` — dokumentacja projektu
+- `workshop.portraitSlot` — portret / zdjęcie autora przy stanowisku
+- `workshop.workbenchSlot` — zdjęcie stanowiska
+
+Pliki mediów trzymaj w:
+
+- `/home/runner/work/Szyseb.github.io/Szyseb.github.io/public/media`
+
+Domyślne pliki SVG w `public/media` to ilustracje/placeholdery.
+Puste sloty obrazów nie wysyłają żądań broken-image.
 
 ## React Bits
 
-Oryginalne komponenty: GooeyNav, WarpText, VariableProximity, BlurText,
-SpotlightCard, Magnet, AccordionGallery, ColorBends, Iridescence, Noise
-i GradualBlur. Pierwsza instalacja pobiera ich źródła JS/CSS z oficjalnego
-rejestru lub repozytorium. Potrzebny jest internet. Nie zastąpiono ich imitacjami.
-Zachowaj public/REACT-BITS-LICENSE.txt. Dodaj pobrane źródła do commita,
-żeby utrwalić wersję.
+Wersje komponentów React Bits są vendored w:
 
-## Kontakt
+- `/home/runner/work/Szyseb.github.io/Szyseb.github.io/src/components/reactbits`
 
-Jedyny adres kontaktowy: astian@gmail.com.
-Jest linkiem mailto: w sekcji Kontakt i w stopce.
-Brak formularza, backendu, Formspree, SMTP i zewnętrznych usług wysyłkowych.
-
-## Treści i zdjęcia
-
-src/content.js — nazwy, opisy, image oraz images.
-public/media — własne zdjęcia, bez EXIF/GPS. Domyślne SVG są placeholderami.
-Własny adres, kontakt, profile i lokalizacje nie są wpisane do kodu.
-Z danych właściciela zachowano wyłącznie imię i nazwisko oraz publiczny e-mail.
-Historia Git i metadane commitów nie zostały zmienione.
-
-## Publikacja
-
-Settings → Pages → GitHub Actions. Własna domena pozostaje w panelu Pages.
-Nie ma pliku CNAME. DNS pozostaje bez zmian.
+Normalny cykl (`install/dev/build`) **nie pobiera** komponentów z sieci.
+Skrypt waliduje tylko lokalne pliki:
 
 ```sh
-git add .
-git diff --cached --stat
-git commit -m "Rebuild portfolio with React Bits"
-git push
+npm run reactbits:validate
 ```
 
-## Zakres sprawdzenia
+Opcjonalna ręczna aktualizacja z oficjalnych źródeł:
 
-Sprawdzono skrypt aktualizacji, składnię plików JS oraz CSS. Nie uruchomiono
-npm install, kompilacji JSX ani przeglądarki. Nie udało się odczytać aktualnych
-źródeł wszystkich komponentów w środowisku rozmowy: pierwsza instalacja i test
-lokalny muszą potwierdzić dostępność rejestru i zgodność API. W razie błędu
-nie ma cichego podmieniania komponentu na imitację — instalacja zgłosi błąd.
+```sh
+npm run reactbits:update
+```
+
+Po aktualizacji należy sprawdzić zmiany i je zacommitować.
+
+## Testy smoke (Playwright)
+
+Testy uruchamiane na buildzie produkcyjnym:
+
+```sh
+npm run build
+npm run test:smoke
+```
+
+Zakres smoke:
+
+- nawigacja i reload dla wszystkich tras
+- mailto kontaktowy
+- mobilna nawigacja i kliknięcia galerii
+- brak poziomego overflow
+- brak błędów JS i lokalnych 4xx/5xx
+- tryb normalny i `prefers-reduced-motion`
+- zrzuty ekranu (desktop/mobile) w artefaktach testów

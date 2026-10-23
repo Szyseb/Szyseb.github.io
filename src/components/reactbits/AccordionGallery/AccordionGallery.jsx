@@ -46,6 +46,7 @@ const AccordionGallery = ({
   const vertical = orientation === 'vertical';
   const count = items.length;
   const [active, setActive] = useState(Math.min(Math.max(defaultIndex, 0), count - 1));
+  const [armedLink, setArmedLink] = useState(-1);
 
   const prefersReduced =
     typeof window !== 'undefined' && window.matchMedia
@@ -161,7 +162,21 @@ const AccordionGallery = ({
   };
 
   const handleClick = (i, e) => {
+    if (trigger === 'click' && armedLink !== i) {
+      e.preventDefault();
+      setArmedLink(i);
+      if (i !== active) setActive(i);
+      return;
+    }
+
     if (i !== active) {
+      e.preventDefault();
+      setActive(i);
+    }
+  };
+
+  const handlePointerDown = (i, e) => {
+    if (trigger === 'click' && i !== active) {
       e.preventDefault();
       setActive(i);
     }
@@ -202,9 +217,10 @@ const AccordionGallery = ({
             className={`ag-panel${isActive ? ' ag-panel--active' : ''}`}
             style={{ borderRadius: `${radius}px` }}
             href={item.link || undefined}
+            onPointerDown={e => handlePointerDown(i, e)}
             onClick={e => handleClick(i, e)}
             onMouseEnter={() => handleEnter(i)}
-            onFocus={() => setActive(i)}
+            onFocus={() => { if (trigger === 'hover') setActive(i); }}
             onKeyDown={e => handleKeyDown(i, e)}
             role="listitem"
             tabIndex={0}

@@ -1,5 +1,5 @@
-import {useEffect,useRef,useState} from 'react';
-import {ArrowUpRight,X,ImagePlus,Pause,Play} from 'lucide-react';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import {ArrowUpRight, ImagePlus, Mail, Pause, Play} from 'lucide-react';
 import GooeyNav from './components/reactbits/GooeyNav/GooeyNav.jsx';
 import WarpText from './components/reactbits/WarpText/WarpText.jsx';
 import VariableProximity from './components/reactbits/VariableProximity/VariableProximity.jsx';
@@ -7,19 +7,392 @@ import BlurText from './components/reactbits/BlurText/BlurText.jsx';
 import SpotlightCard from './components/reactbits/SpotlightCard/SpotlightCard.jsx';
 import Magnet from './components/reactbits/Magnet/Magnet.jsx';
 import AccordionGallery from './components/reactbits/AccordionGallery/AccordionGallery.jsx';
-import {ColorBendsBackground,IridescenceBackground,NoiseLayer} from './components/Backgrounds.jsx';
-import Contact from './components/Contact.jsx';
-import {name,email,projects,tools,pages} from './content.js';
-const navigation=[{label:'Start',href:'#start'},{label:'Projekty',href:'#projekty'},{label:'Warsztat',href:'#warsztat'},{label:'Galeria',href:'#galeria'},{label:'Kontakt',href:'#kontakt'}];
-function Media({src,index,title}){const [failed,setFailed]=useState(false);return <figure className="media-slot">{src&&!failed?<img src={src} alt={`${title} — dokumentacja ${index+1}`} loading="lazy" onError={()=>setFailed(true)}/>:<div className="photo-placeholder"><ImagePlus size={26} strokeWidth={1}/><span>Zdjęcie {index+1}</span></div>}</figure>;}
-export default function App(){
- const [selected,setSelected]=useState(null),[paused,setPaused]=useState(false),[reduced,setReduced]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches);const proximity=useRef(null),dialog=useRef(null);const stopped=paused||reduced;
- useEffect(()=>{const media=matchMedia('(prefers-reduced-motion: reduce)');const change=()=>setReduced(media.matches);media.addEventListener('change',change);return()=>media.removeEventListener('change',change);},[]);
- useEffect(()=>{document.documentElement.dataset.motion=stopped?'off':'on';},[stopped]);
- useEffect(()=>{if(!selected)return;const node=dialog.current;node.showModal();document.body.style.overflow='hidden';return()=>{node.close();document.body.style.overflow='';};},[selected]);
- const gallery=projects.map((project,i)=>({id:project.id,image:project.image,src:project.image,title:project.title,label:project.title,description:project.description,alt:`Miejsce na zdjęcie projektu: ${project.title}`}));
- return <><a className="skip-link" href="#main">Przejdź do treści</a><div className="page-shell"><header className="header"><a className="wordmark" href="#start">{name}<span>·</span></a><div className="navigation"><GooeyNav items={navigation} initialActiveIndex={0} animationTime={450} particleCount={12} particleDistances={[75,10]} particleR={90} colors={[1,2,3,1,2,3,1,4]}/></div></header><main id="main"><section className="hero" id="start"><ColorBendsBackground paused={stopped}/><div className="hero-grid" aria-hidden="true"/><div className="hero-content"><span className="eyebrow">ELEKTRONIKA / KOD / SYGNAŁY</span><h1 className="sr-only">Elektronika. Kod. Sygnały.</h1>{stopped?<div className="static-heading" aria-hidden="true">Elektronika.<br/><span>Kod. Sygnały.</span></div>:<div className="warp-heading" aria-hidden="true"><WarpText text="Elektronika." color="#e7efec" fontSize={84} className="warp-line">Elektronika.</WarpText><WarpText text="Kod. Sygnały." color="#b7c4e6" fontSize={84} className="warp-line">Kod. Sygnały.</WarpText></div>}<div ref={proximity} className="proximity-description">{stopped?<p>Projektuję układy i urządzenia.</p>:<VariableProximity label="Projektuję układy i urządzenia." fromFontVariationSettings="'wght' 400" toFontVariationSettings="'wght' 850" containerRef={proximity} radius={120} falloff="linear"/>}</div><Magnet padding={45} magnetStrength={5} disabled={stopped}><a href="#projekty" className="button primary">Zobacz projekty <ArrowUpRight size={17}/></a></Magnet></div><div className="hero-bottom"><span>PROJEKTY / DOKUMENTACJA / KONTAKT</span><span>SEBASTIAN SZYSZŁO</span></div></section>
- <section id="projekty" className="projects-section"><div className="section-title"><div><span className="eyebrow">PROJEKTY</span><h2>Wybrane realizacje.</h2></div><span className="section-caption">Sprzęt, sygnały i oprogramowanie.</span></div><div className="accordion-wrap"><AccordionGallery items={gallery} defaultIndex={0} accentColor="#a8e8ca" textColor="#eff4f1" className="project-gallery"/></div><div className="project-index">{projects.map((project,i)=><SpotlightCard key={project.id} className="project-card" spotlightColor="rgba(140,230,195,0.15)"><div className="project-copy">{project.status&&<span className="project-status">{project.status}</span>}<h3>{project.title}</h3><p>{project.description}</p><div className="tags">{project.tags.map(tag=><span key={tag}>{tag}</span>)}</div><button className="card-hit" onClick={()=>setSelected(project)} aria-label={`Otwórz: ${project.title}`}/></div></SpotlightCard>)}</div></section>
- <section id="warsztat" className="tools-section"><IridescenceBackground paused={stopped}/><div className="section-title"><div><span className="eyebrow">WARSZTAT</span><h2>Narzędzia.</h2></div><span className="section-caption">Sprzęt, kod i mechanika.</span></div><div className="tool-list">{tools.map(tool=><Magnet key={tool} padding={22} magnetStrength={8} disabled={stopped}><span className="tool">{tool}</span></Magnet>)}</div><div className="about-pages">{pages.slice(0,2).map(page=><SpotlightCard key={page.id} className="about-card" spotlightColor="rgba(150,190,230,0.14)"><h3>{page.title}</h3><p>{page.body}</p></SpotlightCard>)}</div></section>
- <section id="galeria" className="gallery-section"><NoiseLayer paused={stopped}/><div className="section-title"><div><span className="eyebrow">GALERIA</span><h2>Materiały.</h2></div><span className="section-caption">Prototypy, płytki i detale.</span></div><div className="gallery-grid">{projects.flatMap((project,i)=>[0,1].map(n=><Media key={`${project.id}-${n}`} src={project.images[n]} index={n} title={project.title}/>))}</div></section><Contact/></main><footer className="footer"><span>{name}</span><a className="footer-email" href={`mailto:${email}`}>{email}</a><button className="motion-control" onClick={()=>setPaused(value=>!value)} disabled={reduced}>{stopped?<Play size={12}/>:<Pause size={12}/>} {stopped?'Animacje wyłączone':'Zatrzymaj animacje'}</button></footer></div><dialog ref={dialog} className="project-dialog" onCancel={()=>setSelected(null)} onClick={event=>{if(event.target===event.currentTarget)setSelected(null);}} aria-labelledby="project-title">{selected&&<><button className="dialog-close" onClick={()=>setSelected(null)} aria-label="Zamknij projekt"><X size={21}/></button><span className="eyebrow">{selected.tags.join(' / ')}</span><h2 id="project-title">{selected.title}</h2>{selected.status&&<span className="project-status">{selected.status}</span>}<p>{selected.description}</p><div className="detail-gallery">{selected.images.map((src,i)=><Media key={`${selected.id}-${i}`} src={src} title={selected.title} index={i}/>)}</div></>}</dialog></>;
+import {ColorBendsBackground, IridescenceBackground} from './components/Backgrounds.jsx';
+import {email, name, projects, workshop} from './content.js';
+
+const routes = [
+  {label: 'Start', path: '/'},
+  {label: 'Projekty', path: '/projekty'},
+  {label: 'Warsztat', path: '/warsztat'},
+  {label: 'Kontakt', path: '/kontakt'}
+];
+
+const normalize = value => {
+  const source = value || '/';
+  const path = source.startsWith('/') ? source : `/${source}`;
+  if (path === '/') return '/';
+  return path.replace(/\/+$/, '');
+};
+
+const readPath = () => normalize(window.location.hash.slice(1) || '/');
+
+const titleFor = path => {
+  if (path === '/') return `${name} — Portfolio projektowe`;
+  if (path === '/projekty') return `${name} — Projekty`;
+  if (path === '/warsztat') return `${name} — Warsztat`;
+  if (path === '/kontakt') return `${name} — Kontakt`;
+  if (path.startsWith('/projekty/')) {
+    const slug = path.split('/')[2];
+    const project = projects.find(item => item.id === slug);
+    return `${name} — ${project?.title || 'Projekt'}`;
+  }
+  return `${name} — Portfolio`;
+};
+
+function useIsNarrow(max = 760) {
+  const [narrow, setNarrow] = useState(() => window.matchMedia(`(max-width: ${max}px)`).matches);
+
+  useEffect(() => {
+    const media = window.matchMedia(`(max-width: ${max}px)`);
+    const update = () => setNarrow(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, [max]);
+
+  return narrow;
+}
+
+function MediaSlot({src, alt, label, tall = false}) {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return (
+      <div className={`media-slot media-slot--placeholder${tall ? ' media-slot--tall' : ''}`}>
+        <ImagePlus size={24} strokeWidth={1.4} />
+        <p>{label}</p>
+      </div>
+    );
+  }
+
+  return (
+    <figure className={`media-slot${tall ? ' media-slot--tall' : ''}`}>
+      <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+    </figure>
+  );
+}
+
+function ContactBlock() {
+  return (
+    <section className="contact" aria-labelledby="contact-title">
+      <h1 id="contact-title">Kontakt</h1>
+      <p>Najłatwiej złapać mnie mailowo.</p>
+      <a className="mailto" href={`mailto:${email}`}>
+        <Mail size={20} />
+        {email}
+      </a>
+    </section>
+  );
+}
+
+export default function App() {
+  const [path, setPath] = useState(() => readPath());
+  const [paused, setPaused] = useState(false);
+  const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const mainRef = useRef(null);
+  const proximityRef = useRef(null);
+  const narrow = useIsNarrow();
+
+  const stopped = paused || reduced;
+  const selectedProject = useMemo(
+    () => (path.startsWith('/projekty/') ? projects.find(item => item.id === path.split('/')[2]) : null),
+    [path]
+  );
+
+  const currentPath = selectedProject ? `/projekty/${selectedProject.id}` : path;
+  const navIndex = currentPath.startsWith('/projekty/')
+    ? 1
+    : Math.max(0, routes.findIndex(item => item.path === currentPath));
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const next = readPath();
+      if (next.startsWith('/projekty/')) {
+        const slug = next.split('/')[2];
+        if (!projects.some(item => item.id === slug)) {
+          window.location.hash = '#/projekty';
+          return;
+        }
+      }
+      setPath(next);
+    };
+
+    window.addEventListener('hashchange', onHashChange);
+    onHashChange();
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReduced(media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.motion = stopped ? 'off' : 'on';
+  }, [stopped]);
+
+  useEffect(() => {
+    const pageTitle = titleFor(currentPath);
+    if (document.title !== pageTitle) document.title = pageTitle;
+    window.scrollTo({top: 0, behavior: 'instant'});
+    requestAnimationFrame(() => mainRef.current?.focus());
+  }, [currentPath]);
+
+  const navItems = routes.map(item => ({label: item.label, href: `#${item.path}`}));
+
+  const galleryItems = projects.map(project => ({
+    image: project.image,
+    label: project.title,
+    alt: `Ilustracja projektu ${project.title}`,
+    link: `#/projekty/${project.id}`
+  }));
+
+  const projectCards = projects.map(project => (
+    <SpotlightCard
+      key={project.id}
+      className="project-card"
+      spotlightColor="rgb(112 255 203)"
+      intensity={0.4}
+      borderGlow={0.75}
+      grain={0.1}
+      smoothing={0.35}
+      flare
+      ambient
+    >
+      <div className="project-card__content">
+        <span className="project-card__status">{project.status || 'Projekt ukończony'}</span>
+        <h3>{project.title}</h3>
+        <p>{project.description}</p>
+        <div className="tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
+        <a className="text-link" href={`#/projekty/${project.id}`}>
+          Otwórz stronę projektu <ArrowUpRight size={16} />
+        </a>
+      </div>
+    </SpotlightCard>
+  ));
+
+  return (
+    <div className="app">
+      <a className="skip-link" href="#main">
+        Przejdź do treści
+      </a>
+
+      <header className="topbar">
+        <a className="wordmark" href="#/">
+          {name}
+        </a>
+        <GooeyNav
+          items={navItems}
+          activeIndex={navIndex}
+          onChange={index => setPath(routes[index].path)}
+          color="#65f0c5"
+          colors={['#65f0c5', '#68b1ff', '#9d79ff']}
+          frame
+          size={narrow ? 'sm' : 'md'}
+          className="main-nav"
+        />
+        <button className="motion-toggle" type="button" onClick={() => setPaused(value => !value)} disabled={reduced}>
+          {stopped ? <Play size={14} /> : <Pause size={14} />}
+          {stopped ? 'Animacje wyłączone' : 'Pauza animacji'}
+        </button>
+      </header>
+
+      <main id="main" ref={mainRef} tabIndex="-1">
+        {currentPath === '/' && (
+          <>
+            <section className="hero" aria-labelledby="hero-title">
+              <ColorBendsBackground paused={stopped} />
+              <div className="hero__content">
+                <h1 id="hero-title" className="sr-only">
+                  Portfolio projektowe
+                </h1>
+                {stopped ? (
+                  <p className="hero__fallback">Elektronika\nKod i sygnały</p>
+                ) : (
+                  <WarpText
+                    text={'Elektronika\nKod i sygnały'}
+                    className="hero__warp"
+                    fontSize="clamp(2.4rem, 11vw, 6rem)"
+                    fontWeight={700}
+                    color="#e8f6ff"
+                    idleDrift={0.22}
+                    clickRipple
+                    warpStrength={0.08}
+                  />
+                )}
+
+                <div ref={proximityRef} className="hero__lead">
+                  <VariableProximity
+                    label="Projektuję układy i narzędzia edukacyjne. Ten serwis zbiera notatki, schematy i dokumentację pięciu projektów."
+                    fromFontVariationSettings="'wght' 390, 'opsz' 14"
+                    toFontVariationSettings="'wght' 820, 'opsz' 28"
+                    fromColor="#b5d2db"
+                    toColor="#e8fff6"
+                    idleWave
+                    radius={140}
+                    lift={0.06}
+                    scale={1.05}
+                    containerRef={proximityRef}
+                  />
+                </div>
+
+                <BlurText
+                  className="hero__sub"
+                  text="Kliknij projekt i przejdź do jego oddzielnej strony z miejscami na dokumentację."
+                  animateBy="words"
+                  direction="bottom"
+                  effect="focus"
+                  trigger="view"
+                  delay={80}
+                  stepDuration={0.28}
+                />
+
+                <Magnet padding={50} magnetStrength={4} disabled={stopped}>
+                  <a className="cta" href="#/projekty">
+                    Przejdź do projektów <ArrowUpRight size={16} />
+                  </a>
+                </Magnet>
+              </div>
+            </section>
+
+            <section className="section">
+              <div className="section-head">
+                <h2>Projekty</h2>
+                <a className="text-link" href="#/projekty">
+                  Zobacz wszystkie
+                </a>
+              </div>
+              <div className="grid">{projectCards.slice(0, 3)}</div>
+            </section>
+          </>
+        )}
+
+        {currentPath === '/projekty' && (
+          <section className="section" aria-labelledby="projects-title">
+            <div className="section-head">
+              <h1 id="projects-title">Indeks projektów</h1>
+              <p>Każdy projekt ma własną podstronę z miejscem na dokumentację i zdjęcia.</p>
+            </div>
+
+            <div className="gallery-shell">
+              <AccordionGallery
+                items={galleryItems}
+                defaultIndex={0}
+                accentColor="#8bf7d1"
+                textColor="#f4fbff"
+                orientation={narrow ? 'vertical' : 'horizontal'}
+                trigger={narrow ? 'click' : 'hover'}
+                height={narrow ? 320 : 430}
+                className="project-gallery"
+              />
+            </div>
+
+            <div className="grid">{projectCards}</div>
+          </section>
+        )}
+
+        {selectedProject && (
+          <section className="section project-page" aria-labelledby="project-title">
+            <div className="section-head">
+              <h1 id="project-title">{selectedProject.title}</h1>
+              <p>{selectedProject.description}</p>
+            </div>
+
+            <SpotlightCard
+              className="project-page__hero"
+              spotlightColor="#78c4ff"
+              intensity={0.35}
+              borderGlow={0.68}
+              grain={0.08}
+              smoothing={0.28}
+              flare
+              ambient
+            >
+              <MediaSlot
+                src={selectedProject.image}
+                alt={`Ilustracja projektu ${selectedProject.title}`}
+                label={`Okładka projektu ${selectedProject.title} (ilustracja)`}
+                tall
+              />
+            </SpotlightCard>
+
+            <div className="docs-grid">
+              {selectedProject.images.map((src, index) => (
+                <MediaSlot
+                  key={`${selectedProject.id}-${index}`}
+                  src={src}
+                  alt={`Dokumentacja projektu ${selectedProject.title}, obraz ${index + 1}`}
+                  label={`Dodaj zdjęcie dokumentacji ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            <div className="row-links">
+              <a className="text-link" href="#/projekty">
+                Wróć do indeksu projektów
+              </a>
+              <a className="text-link" href="#/kontakt">
+                Napisz mail
+              </a>
+            </div>
+          </section>
+        )}
+
+        {currentPath === '/warsztat' && (
+          <section className="section workshop" aria-labelledby="workshop-title">
+            <IridescenceBackground paused={stopped} />
+            <div className="section-head">
+              <h1 id="workshop-title">Warsztat i notatki</h1>
+              <p>{workshop.intro}</p>
+            </div>
+
+            <SpotlightCard
+              className="workshop-note"
+              spotlightColor="#a289ff"
+              intensity={0.33}
+              borderGlow={0.65}
+              grain={0.09}
+              smoothing={0.3}
+              flare
+              ambient
+            >
+              <p>{workshop.about}</p>
+            </SpotlightCard>
+
+            <div className="tools" role="list" aria-label="Narzędzia">
+              {workshop.tools.map(tool => (
+                <Magnet key={tool} padding={24} magnetStrength={6} disabled={stopped}>
+                  <span role="listitem" className="tool-pill">
+                    {tool}
+                  </span>
+                </Magnet>
+              ))}
+            </div>
+
+            <div className="docs-grid">
+              <MediaSlot
+                src={workshop.portraitSlot}
+                alt="Portret lub zdjęcie autora przy stanowisku"
+                label="Dodaj zdjęcie portretowe lub przy stanowisku"
+              />
+              <MediaSlot
+                src={workshop.workbenchSlot}
+                alt="Zdjęcie stanowiska warsztatowego"
+                label="Dodaj zdjęcie stanowiska warsztatowego"
+              />
+            </div>
+          </section>
+        )}
+
+        {currentPath === '/kontakt' && <ContactBlock />}
+      </main>
+
+      <footer className="footer">
+        <span>{name}</span>
+        <a href={`mailto:${email}`}>{email}</a>
+      </footer>
+    </div>
+  );
 }
