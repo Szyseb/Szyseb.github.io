@@ -1,9 +1,18 @@
 <!doctype html>
-<html lang="pl">
+<html lang="pl" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f8f7f2" />
+    <meta id="theme-color" name="theme-color" content="#101411" data-dark="#101411" data-light="#f3f7f2" />
+    <script>
+      try {
+        if (localStorage.getItem('portfolio-theme') === 'light') {
+          document.documentElement.dataset.theme = 'light';
+          const themeColor = document.getElementById('theme-color');
+          themeColor.content = themeColor.dataset.light;
+        }
+      } catch {}
+    </script>
     <meta name="description" content="Portfolio Sebastiana Szyszły. Projekty z elektroniki, przetwarzania sygnałów i programowania." />
     <title>Sebastian Szyszło · Portfolio</title>
     <link rel="icon" type="image/svg+xml" href="/src/monogram.svg" />
