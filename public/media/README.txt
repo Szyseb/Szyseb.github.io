@@ -1,1 +1,2 @@
-Zdjęcia: ustaw image (okładka) i images (dokumentacja) w src/content.js. Domyślne SVG to placeholdery, nie zdjęcia urządzeń. Usuń EXIF/GPS z własnych zdjęć przed publikacją.
+Dodaj tu zdjęcia projektów i wpisz ich ścieżki w polu images w src/content.js.
+Przed publikacją usuń ze zdjęć zbędne dane EXIF, w tym lokalizację GPS.
