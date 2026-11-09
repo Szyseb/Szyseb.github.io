@@ -45,6 +45,8 @@ test('portfolio projects, copied contact address and assets', async ({page}, tes
   await page.getByRole('button', {name: 'Skopiuj adres szysebastian@gmail.com'}).click();
   await expect(page.getByRole('status')).toHaveText('Adres e-mail skopiowany.');
   expect(await page.evaluate(() => window.copiedEmail)).toBe('szysebastian@gmail.com');
+  await expect(page.getByRole('link', {name: 'LinkedIn'}))
+    .toHaveAttribute('href', 'https://www.linkedin.com/in/sebastian-szyszło-a57877218');
 
   expect(pageErrors).toEqual([]);
   expect(badResponses).toEqual([]);
@@ -65,6 +67,7 @@ test('defaults to dark and remembers the selected theme', async ({page}) => {
   await page.goto('/');
   const root = page.locator('html');
   await expect(root).toHaveAttribute('data-theme', 'dark');
+  await expect(root).toHaveCSS('background-color', 'rgb(18, 18, 18)');
   await expect(root).toHaveCSS('color-scheme', 'dark');
   await page.getByRole('button', {name: 'Włącz jasny motyw'}).click();
   await expect(root).toHaveCSS('color-scheme', 'light');

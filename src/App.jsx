@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
-import {Check, Copy, Plus} from 'lucide-react';
-import {email, projects, toolGroups} from './content.js';
+import {ArrowUpRight, Check, Copy, Plus} from 'lucide-react';
+import {email, linkedin, projects, toolGroups} from './content.js';
 import Header from './Header.jsx';
 
 const previousRoutes = new Map([
@@ -77,6 +77,9 @@ function Contact() {
           {copyStatus === 'copied' && 'Adres e-mail skopiowany.'}
           {copyStatus === 'failed' && 'Zaznacz i skopiuj adres ręcznie.'}
         </p>
+        <a className="profile-link" href={linkedin}>
+          LinkedIn <ArrowUpRight size={16} aria-hidden="true" />
+        </a>
       </div>
     </section>
   );

@@ -1,12 +1,12 @@
 :root {
   color-scheme: dark;
-  --paper: #101411;
-  --ink: #edf4ed;
-  --muted: #aab9ad;
-  --line: #303d33;
-  --surface: #151f18;
-  --surface-line: #35483a;
-  --row: #19251c;
+  --paper: #121212;
+  --ink: #f0f0f0;
+  --muted: #b5b5b5;
+  --line: #323232;
+  --surface: #191919;
+  --surface-line: #3d3d3d;
+  --row: #202020;
   --accent: #82f6a7;
   --accent-ink: #102017;
   --badge: #21412b;
@@ -103,21 +103,13 @@ svg { flex: none; }
 
 .brand-wordmark {
   --brand-progress: 0;
-  position: relative;
-  isolation: isolate;
+  --letter-glow: calc(var(--brand-progress) * var(--glow-strength));
   display: flex;
   align-items: baseline;
   white-space: nowrap;
-}
-
-.brand-wordmark::before {
-  position: absolute;
-  inset: -12px -18px;
-  z-index: -1;
-  background: radial-gradient(ellipse, rgb(var(--glow) / var(--glow-strength)), transparent 70%);
-  opacity: calc(var(--brand-progress) * .62);
-  pointer-events: none;
-  content: "";
+  filter:
+    drop-shadow(0 0 4px rgb(var(--glow) / var(--letter-glow)))
+    drop-shadow(0 0 9px rgb(var(--glow) / calc(var(--letter-glow) * .32)));
 }
 
 .brand-reveal, .brand-dot {
@@ -290,12 +282,16 @@ h2 {
   padding: clamp(26px, 5vw, 62px);
   border: 1px solid var(--surface-line);
   border-radius: 9px;
-  background:
-    radial-gradient(ellipse at 100% 10%, rgb(var(--glow) / calc(var(--glow-strength) * .20)), transparent 62%),
-    var(--surface);
+  background: var(--surface);
 }
 .contact p { color: var(--muted); }
-.contact-actions { justify-self: end; min-width: 0; }
+.contact-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-self: end;
+  min-width: 0;
+}
 
 .email-copy {
   display: inline-flex;
@@ -322,6 +318,22 @@ h2 {
 }
 .email-copy:hover { text-shadow: 0 0 14px rgb(var(--glow) / var(--glow-strength)); }
 .contact .copy-note { font-size: 13px; margin-top: 5px; }
+
+.profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 8px;
+  padding-inline: 12px;
+  border: 1px solid var(--surface-line);
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+.profile-link svg { color: var(--accent); }
+.profile-link:hover { border-color: var(--accent); color: var(--accent); }
 
 @media (max-width: 900px) {
   .container { width: calc(100% - 64px); }

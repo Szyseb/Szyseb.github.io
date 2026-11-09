@@ -1,5 +1,6 @@
 export const name = 'Sebastian Szyszło';
 export const email = 'szysebastian@gmail.com';
+export const linkedin = 'https://www.linkedin.com/in/sebastian-szyszło-a57877218';
 
 export const projects = [
   {
