@@ -1,4 +1,4 @@
-# Portfolio Sebastiana Szyszły
+# Portfolio
 
 Wymaga Node.js 22.12 lub nowszego.
 
