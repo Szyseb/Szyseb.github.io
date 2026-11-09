@@ -3,18 +3,6 @@ import {ArrowDown, ArrowUp, ArrowUpRight, Check, Copy, Plus} from 'lucide-react'
 import {email, name, projects, toolGroups} from './content.js';
 import monogram from './monogram.svg';
 
-const previousRoutes = new Map([
-  ['/', 'start'],
-  ['/projekty', 'projekty'],
-  ['/projekty/pcsk225', 'pcsk225'],
-  ['/projekty/lokalizacja', 'wireless'],
-  ['/projekty/sn74138', 'layout'],
-  ['/projekty/kicad-7seg', 'display'],
-  ['/projekty/perfect-circuit-builder', 'game'],
-  ['/warsztat', 'warsztat'],
-  ['/kontakt', 'kontakt'],
-]);
-
 function Project({project, index}) {
   const {id, title, description, detail, status, tags, image, images} = project;
 
@@ -61,7 +49,7 @@ function Contact() {
     <section className="contact" id="kontakt" aria-labelledby="contact-title">
       <div>
         <h2 id="contact-title">Kontakt</h2>
-        <p>Masz pytanie o któryś projekt? Napisz do mnie.</p>
+        <p>Pomysł, projekt, współpraca? Napisz.</p>
       </div>
       <div className="contact-actions">
         <a className="email-link" href={`mailto:${email}`}>{email}<ArrowUpRight size={19} aria-hidden="true" /></a>
@@ -81,8 +69,7 @@ function Contact() {
 export default function App() {
   useEffect(() => {
     function openLinkedProject() {
-      const fragment = window.location.hash.slice(1);
-      const target = document.getElementById(previousRoutes.get(fragment) ?? fragment);
+      const target = document.getElementById(window.location.hash.slice(1));
       if (target instanceof HTMLDetailsElement) {
         target.open = true;
         target.scrollIntoView({block: 'start'});
@@ -116,9 +103,9 @@ export default function App() {
       <main className="container" id="main" tabIndex={-1}>
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-copy" id="o-mnie">
-            <h1 id="hero-title">Elektronika w praktyce<span>.</span></h1>
-            <p className="hero-description">Nazywam się Sebastian Szyszło. Projektuję układy elektroniczne i piszę oprogramowanie. Zajmuję się też odbiorem i przetwarzaniem sygnałów radiowych.</p>
-            <a className="primary-link" href="#projekty">Zobacz projekty <ArrowDown size={18} aria-hidden="true" /></a>
+            <h1 id="hero-title">Elektronik<span>.</span></h1>
+            <p className="hero-description">Projektuję układy i piszę oprogramowanie. </p>
+            <a className="primary-link" href="#projekty">Zobacz moje projekty <ArrowDown size={18} aria-hidden="true" /></a>
           </div>
         </section>
         <section className="projects" id="projekty" aria-labelledby="projects-title">
